@@ -11,6 +11,7 @@
 #include "uarts.h"
 #include "usb_uarts.h"
 #include "io.h"
+#include "pwm.h"
 
 static char   * rx_buffer;
 static unsigned rx_buffer_len = 0;
@@ -40,7 +41,7 @@ static char * skip_to_space(char * pos)
 }
 
 
-void io_cb()
+void io_cb(void)
 {
     char * pos = NULL;
     unsigned io = strtoul(rx_buffer + rx_pos, &pos, 10);
@@ -137,7 +138,7 @@ void io_cb()
 }
 
 
-void special_cb()
+void special_cb(void)
 {
     char * pos = NULL;
     unsigned io = strtoul(rx_buffer + rx_pos, &pos, 10);
@@ -149,7 +150,32 @@ void special_cb()
 }
 
 
-void version_cb()
+void pwm_cb(void)
+{
+    char * pos = rx_buffer + rx_pos;
+    unsigned pwm = strtoul(pos, &pos, 10);
+    unsigned freq, duty;
+    if (pos && *pos)
+    {
+        pos = skip_space(pos);
+        freq = strtoul(pos, &pos, 10);
+        pwm_set_freq(pwm, freq);
+        if (pos && *pos)
+        {
+            pos = skip_space(pos);
+            duty = strtoul(pos, &pos, 10);
+            pwm_set_duty(pwm, duty);
+        }
+    }
+
+    if (pwm_get(pwm, &freq, &duty))
+        log_out("PWM %u %uhz @ %u / 1000", pwm, freq, duty);
+    else
+        log_out("Invalid PWM");
+}
+
+
+void version_cb(void)
 {
     log_out("Version : %s", GIT_VERSION);
 }
@@ -159,6 +185,7 @@ static cmd_t cmds[] = {
     { "ios",      "Print all IOs.",          ios_log},
     { "io",       "Get/set IO set.",         io_cb},
     { "sio",      "Enable Special IO.",      special_cb},
+    { "pwm",      "Get/Set PWM settings.",   pwm_cb},
     { "version",  "Print version.",          version_cb},
     { NULL },
 };

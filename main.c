@@ -15,6 +15,7 @@
 #include "uarts.h"
 #include "io.h"
 #include "uart_rings.h"
+#include "pwm.h"
 
 
 void hard_fault_handler(void)
@@ -36,6 +37,7 @@ int main(void) {
     cmds_init();
     usb_init();
     ios_init();
+    pwm_init();
 
     gpio_mode_setup(LED_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, LED_PIN);
     gpio_clear(LED_PORT, LED_PIN);
