@@ -98,45 +98,12 @@ typedef struct
 #define UART_CHANNELS_COUNT 1
 #define UART_DEBUG USART2
 
-/*
- * NOTE: A13 and A14 will cause SWD problems.
- */
+
 #define IOS_PORT_N_PINS            \
 {                                  \
-    {GPIOC, GPIO12},   /* IO 0  */ \
-    {GPIOA, GPIO15},   /* IO 1  */ \
-    {GPIOB, GPIO7},    /* IO 2  */ \
-    {GPIOA, GPIO8},    /* IO 3  */ \
-    {GPIOB, GPIO10},   /* IO 4  */ \
-    {GPIOB, GPIO4},    /* IO 5  */ \
-    {GPIOD, GPIO2},    /* IO 6  */ \
-    {GPIOC, GPIO2},    /* IO 7  */ \
-    {GPIOB, GPIO13},   /* IO 8  */ \
-    {GPIOC, GPIO9},    /* IO 9  */ \
-    {GPIOC, GPIO8},    /* IO 10 */ \
-    {GPIOC, GPIO6},    /* IO 11 */ \
-    {GPIOB, GPIO12},   /* IO 12 */ \
-    {GPIOB, GPIO11},   /* IO 13 */ \
-    {GPIOB, GPIO2},    /* IO 14 */ \
-    {GPIOB, GPIO6},    /* IO 15 */ \
-    {GPIOB, GPIO14},   /* IO 16 */ \
-    {GPIOB, GPIO15},   /* IO 17 */ \
-    {GPIOA, GPIO9},    /* IO 18 */ \
-    {GPIOA, GPIO10},   /* IO 19 */ \
-    {GPIOA, GPIO13},   /* IO 20 */ \
-    {GPIOA, GPIO14},   /* IO 21 */ \
-    {GPIOC, GPIO13},   /* IO 22 */ \
-    {GPIOB, GPIO5},    /* IO 23 */ \
-    {GPIOB, GPIO8},    /* IO 24 */ \
-    {GPIOB, GPIO9},    /* IO 25 */ \
-    {GPIOB, GPIO3},    /* IO 26 - PPS 0 */ \
-    {GPIOC, GPIO7},    /* IO 27 - PPS 1 */ \
-    {GPIOC, GPIO10},   /* IO 28 - UART_0_RX */ \
-    {GPIOC, GPIO11},   /* IO 29 - UART_0_TX */ \
-    {GPIOA, GPIO0},    /* IO 30 - UART_1_RX  */ \
-    {GPIOA, GPIO1},    /* IO 31 - UART_1_TX */ \
+    {GPIOB, GPIO14},   /* IO 0 - PPS 0 */ \
+    {GPIOA, GPIO6},    /* IO 1 - PPS 1 */ \
 }
-
 
 #define IO_AS_INPUT     0x0100
 #define IO_DIR_LOCKED   0x0200
@@ -153,41 +120,11 @@ typedef struct
 
 #define IOS_STATE                                                            \
 {                                                                            \
-    IO_AS_INPUT | GPIO_PUPD_PULLUP,                   /* GPIO 0   */         \
-    IO_AS_INPUT | GPIO_PUPD_PULLUP,                   /* GPIO 1   */         \
-    IO_AS_INPUT | GPIO_PUPD_PULLUP,                   /* GPIO 2   */         \
-    IO_AS_INPUT | GPIO_PUPD_PULLUP,                   /* GPIO 3   */         \
-    IO_AS_INPUT | GPIO_PUPD_PULLUP,                   /* GPIO 4   */         \
-    IO_AS_INPUT | GPIO_PUPD_PULLUP,                   /* GPIO 5   */         \
-    IO_AS_INPUT | GPIO_PUPD_PULLUP,                   /* GPIO 6   */         \
-    IO_AS_INPUT | GPIO_PUPD_PULLUP,                   /* GPIO 7   */         \
-    IO_AS_INPUT | GPIO_PUPD_PULLUP,                   /* GPIO 8   */         \
-    IO_AS_INPUT | GPIO_PUPD_PULLUP,                   /* GPIO 9   */         \
-    IO_DIR_LOCKED | GPIO_PUPD_PULLDOWN | IO_RELAY,    /* GPIO 10  */         \
-    IO_DIR_LOCKED | GPIO_PUPD_PULLDOWN | IO_RELAY,    /* GPIO 11  */         \
-    IO_DIR_LOCKED | GPIO_PUPD_PULLDOWN | IO_RELAY,    /* GPIO 12  */         \
-    IO_DIR_LOCKED | GPIO_PUPD_PULLDOWN | IO_RELAY,    /* GPIO 13  */         \
-    IO_DIR_LOCKED | GPIO_PUPD_PULLDOWN | IO_RELAY,    /* GPIO 14  */         \
-    GPIO_PUPD_PULLUP,                                 /* GPIO 15  */         \
-    GPIO_PUPD_PULLUP,                                 /* GPIO 16  */         \
-    GPIO_PUPD_PULLUP,                                 /* GPIO 17  */         \
-    IO_DIR_LOCKED | GPIO_PUPD_PULLDOWN | IO_HIGHSIDE, /* GPIO 18  */         \
-    IO_DIR_LOCKED | GPIO_PUPD_PULLDOWN | IO_HIGHSIDE, /* GPIO 19  */         \
-    IO_DIR_LOCKED | GPIO_PUPD_PULLDOWN | IO_HIGHSIDE, /* GPIO 20  */         \
-    IO_DIR_LOCKED | GPIO_PUPD_PULLDOWN | IO_HIGHSIDE, /* GPIO 21  */         \
-    IO_DIR_LOCKED | GPIO_PUPD_PULLDOWN | IO_HIGHSIDE, /* GPIO 22  */         \
-    IO_DIR_LOCKED | GPIO_PUPD_PULLDOWN | IO_HIGHSIDE, /* GPIO 23  */         \
-    IO_DIR_LOCKED | GPIO_PUPD_PULLDOWN | IO_HIGHSIDE, /* GPIO 24  */         \
-    IO_DIR_LOCKED | GPIO_PUPD_PULLDOWN | IO_HIGHSIDE, /* GPIO 25  */         \
-    IO_AS_INPUT | IO_PPS0 | IO_SPECIAL_EN,            /* GPIO 26 - PPS 0 */     \
-    IO_AS_INPUT | IO_PPS1 | IO_SPECIAL_EN,            /* GPIO 27 - PPS 1 */     \
-    IO_UART0 | IO_SPECIAL_EN,                         /* GPIO 28 - UART_0_RX */ \
-    IO_UART0 | IO_UART_TX | IO_SPECIAL_EN,            /* GPIO 29 - UART_0_TX */ \
-    IO_UART1 | IO_SPECIAL_EN,                         /* GPIO 30 - UART_1_RX */ \
-    IO_UART1 | IO_UART_TX | IO_SPECIAL_EN,            /* GPIO 31 - UART_1_TX */ \
+    IO_AS_INPUT | IO_PPS0 | IO_SPECIAL_EN,            /* GPIO 0 - PPS 0 */   \
+    IO_AS_INPUT | IO_PPS1 | IO_SPECIAL_EN,            /* GPIO 1 - PPS 1 */   \
 }
 
-#define PPS0_IO_NUM          26
-#define PPS1_IO_NUM          27
+#define PPS0_IO_NUM          0
+#define PPS1_IO_NUM          1
 
 #endif //__PINMAPS__
