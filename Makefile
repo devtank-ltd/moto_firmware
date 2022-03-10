@@ -23,7 +23,7 @@ CFLAGS		+= -DGIT_VERSION=\"[$(GIT_COMMITS)]-$(GIT_COMMIT)\"
 
 INCLUDE_PATHS += -Ilibs/libopencm3/include -I.
 
-LINK_SCRIPT = libs/libopencm3/lib/stm32/f0/stm32f07xzb.ld
+LINK_SCRIPT = stm32f07xzb.ld
 
 LINK_FLAGS =  -Llibs/libopencm3/lib --static -nostartfiles
 LINK_FLAGS += -Llibs/libopencm3/lib/stm32/f0
@@ -37,9 +37,7 @@ SOURCES += main.c \
            uart_rings.c \
            cmd.c \
            usb_uarts.c \
-           adcs.c \
-           pulsecount.c \
-           timers.c \
+           pwm.c \
            io.c \
            ring.c
 

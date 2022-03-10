@@ -10,10 +10,7 @@
 #include "cmd.h"
 #include "uarts.h"
 #include "usb_uarts.h"
-#include "adcs.h"
-#include "pulsecount.h"
 #include "io.h"
-#include "timers.h"
 
 static char   * rx_buffer;
 static unsigned rx_buffer_len = 0;
@@ -26,21 +23,6 @@ typedef struct
     const char * desc;
     void (*cb)(void);
 } cmd_t;
-
-
-void pps_cb()
-{
-    unsigned pps = strtoul(rx_buffer + rx_pos, NULL, 10);
-
-    pulsecount_pps_log(pps);
-}
-
-
-void adc_cb()
-{
-    unsigned adc = strtoul(rx_buffer + rx_pos, NULL, 10);
-    adcs_adc_log(adc);
-}
 
 
 static char * skip_space(char * pos)
@@ -167,71 +149,6 @@ void special_cb()
 }
 
 
-void count_cb()
-{
-    log_out("PPSS    : %u", pulsecount_get_count());
-    log_out("ADCs    : %u", adcs_get_count());
-    log_out("IOs     : %u", ios_get_count());
-    log_out("UARTs   : %u", UART_CHANNELS_COUNT-1); /* Control/Debug is left */
-}
-
-
-void uart_cb()
-{
-    char * pos = NULL;
-    unsigned uart = strtoul(rx_buffer + rx_pos, &pos, 10);
-
-    unsigned         speed;
-    uint8_t          databits;
-    uart_parity_t    parity;
-    uart_stop_bits_t stop;
-
-    uart++;
-
-    if (!uart_get_setup(uart, &speed, &databits, &parity, &stop))
-    {
-        log_error("INVALID UART GIVEN");
-        return;
-    }
-
-    pos = skip_space(pos);
-    if (*pos)
-    {
-        speed = strtoul(pos, NULL, 10);
-        pos = skip_space(++pos);
-        if (*pos)
-        {
-            if (isdigit((int)*pos))
-            {
-                databits = (uint8_t)(*pos) - (uint8_t)'0';
-                pos = skip_space(++pos);
-            }
-
-            switch(*pos)
-            {
-                case 'N' : parity = uart_parity_none; break;
-                case 'E' : parity = uart_parity_even; break;
-                case 'O' : parity = uart_parity_odd; break;
-                default: break;
-            }
-            pos = skip_space(++pos);
-
-            switch(*pos)
-            {
-                case '1' : stop = uart_stop_bits_1; break;
-                case '2' : stop = uart_stop_bits_2; break;
-                default: break;
-            }
-        }
-
-        uart_resetup(uart, speed, databits, parity, stop);
-    }
-
-    log_out("UART %u : %u %"PRIu8"%c%"PRIu8, uart - 1,
-        speed, databits, uart_parity_as_char(parity), uart_stop_bits_as_int(stop));
-}
-
-
 void version_cb()
 {
     log_out("Version : %s", GIT_VERSION);
@@ -239,15 +156,9 @@ void version_cb()
 
 
 static cmd_t cmds[] = {
-    { "ppss",     "Print all pulse info.",   pulsecount_log},
-    { "pps",      "Print pulse info.",       pps_cb},
-    { "adc",      "Print ADC.",              adc_cb},
-    { "adcs",     "Print all ADCs.",         adcs_log},
     { "ios",      "Print all IOs.",          ios_log},
     { "io",       "Get/set IO set.",         io_cb},
     { "sio",      "Enable Special IO.",      special_cb},
-    { "count",    "Counts of controls.",     count_cb},
-    { "uart",     "Change UART speed.",      uart_cb},
     { "version",  "Print version.",          version_cb},
     { NULL },
 };

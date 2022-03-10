@@ -13,9 +13,6 @@
 #include "log.h"
 #include "usb_uarts.h"
 #include "uarts.h"
-#include "adcs.h"
-#include "pulsecount.h"
-#include "timers.h"
 #include "io.h"
 #include "uart_rings.h"
 
@@ -38,9 +35,6 @@ int main(void) {
     log_init();
     cmds_init();
     usb_init();
-    adcs_init();
-    pulsecount_init();
-    timers_init();
     ios_init();
 
     gpio_mode_setup(LED_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, LED_PIN);

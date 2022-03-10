@@ -101,8 +101,8 @@ typedef struct
 
 #define IOS_PORT_N_PINS            \
 {                                  \
-    {GPIOB, GPIO14},   /* IO 0 - PPS 0 */ \
-    {GPIOA, GPIO6},    /* IO 1 - PPS 1 */ \
+    {GPIOB, GPIO14},   /* IO 0 - PWM 0 */ \
+    {GPIOA, GPIO6},    /* IO 1 - PWM 1 */ \
 }
 
 #define IO_AS_INPUT     0x0100
@@ -111,20 +111,18 @@ typedef struct
 #define IO_UART_TX      0x0800
 #define IO_RELAY        0x1000
 #define IO_HIGHSIDE     0x2000
-#define IO_PPS0         0x3000
-#define IO_PPS1         0x4000
-#define IO_UART0        0x5000
-#define IO_UART1        0x6000
+#define IO_PWM0         0x3000
+#define IO_PWM1         0x4000
 #define IO_TYPE_MASK    0xF000
 #define IO_PULL_MASK    0x0003
 
 #define IOS_STATE                                                            \
 {                                                                            \
-    IO_AS_INPUT | IO_PPS0 | IO_SPECIAL_EN,            /* GPIO 0 - PPS 0 */   \
-    IO_AS_INPUT | IO_PPS1 | IO_SPECIAL_EN,            /* GPIO 1 - PPS 1 */   \
+    IO_AS_INPUT | IO_PWM0 | IO_SPECIAL_EN,            /* GPIO 0 - PWM 0 */   \
+    IO_AS_INPUT | IO_PWM1 | IO_SPECIAL_EN,            /* GPIO 1 - PWM 1 */   \
 }
 
-#define PPS0_IO_NUM          0
-#define PPS1_IO_NUM          1
+#define PWM0_IO_NUM          0
+#define PWM1_IO_NUM          1
 
 #endif //__PINMAPS__
