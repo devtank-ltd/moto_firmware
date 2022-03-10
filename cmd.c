@@ -28,34 +28,6 @@ typedef struct
 } cmd_t;
 
 
-static void pps_cb();
-static void adc_cb();
-static void io_cb();
-static void special_cb();
-static void count_cb();
-static void uart_cb();
-static void uarts_cb();
-static void version_cb();
-
-
-static cmd_t cmds[] = {
-    { "ppss",     "Print all pulse info.",   pulsecount_log},
-    { "pps",      "Print pulse info.",       pps_cb},
-    { "adc",      "Print ADC.",              adc_cb},
-    { "adcs",     "Print all ADCs.",         adcs_log},
-    { "ios",      "Print all IOs.",          ios_log},
-    { "io",       "Get/set IO set.",         io_cb},
-    { "sio",      "Enable Special IO.",      special_cb},
-    { "count",    "Counts of controls.",     count_cb},
-    { "uart",     "Change UART speed.",      uart_cb},
-    { "uarts",    "Show UART speed.",        uarts_cb},
-    { "version",  "Print version.",          version_cb},
-    { NULL },
-};
-
-
-
-
 void pps_cb()
 {
     unsigned pps = strtoul(rx_buffer + rx_pos, NULL, 10);
@@ -260,31 +232,25 @@ void uart_cb()
 }
 
 
-void uarts_cb()
-{
-    for(unsigned n = 0; n < (UART_CHANNELS_COUNT - 1); n++)
-    {
-        unsigned         speed;
-        uint8_t          databits;
-        uart_parity_t    parity;
-        uart_stop_bits_t stop;
-
-        if (!uart_get_setup(n + 1, &speed, &databits, &parity, &stop))
-        {
-            log_error("INVALID UART GIVEN");
-            return;
-        }
-
-        log_out("UART %u : %u %"PRIu8"%c%"PRIu8, n,
-            speed, databits, uart_parity_as_char(parity), uart_stop_bits_as_int(stop));
-    }
-}
-
-
 void version_cb()
 {
     log_out("Version : %s", GIT_VERSION);
 }
+
+
+static cmd_t cmds[] = {
+    { "ppss",     "Print all pulse info.",   pulsecount_log},
+    { "pps",      "Print pulse info.",       pps_cb},
+    { "adc",      "Print ADC.",              adc_cb},
+    { "adcs",     "Print all ADCs.",         adcs_log},
+    { "ios",      "Print all IOs.",          ios_log},
+    { "io",       "Get/set IO set.",         io_cb},
+    { "sio",      "Enable Special IO.",      special_cb},
+    { "count",    "Counts of controls.",     count_cb},
+    { "uart",     "Change UART speed.",      uart_cb},
+    { "version",  "Print version.",          version_cb},
+    { NULL },
+};
 
 
 void cmds_process(char * command, unsigned len)
@@ -321,7 +287,6 @@ void cmds_process(char * command, unsigned len)
     }
     log_out(LOG_END_SPACER);
 }
-
 
 
 void cmds_init()

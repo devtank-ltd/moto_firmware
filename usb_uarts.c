@@ -25,12 +25,7 @@ Bits 7 Direction 0 = In, 1 = Out
 */
 
 #define USB_COM1_END_ADDR  0x81
-#define USB_COM2_END_ADDR  0x83
-#define USB_COM3_END_ADDR  0x85
-
 #define USB_DATA1_END_ADDR 0x02 // write addr is OR 0x80
-#define USB_DATA2_END_ADDR 0x04 // write addr is OR 0x80
-#define USB_DATA3_END_ADDR 0x06 // write addr is OR 0x80
 
 #define USB_COM_PCK_SZ     16
 
@@ -59,15 +54,7 @@ static struct
     {
         USB_DATA1_END_ADDR,
         USB_COM1_END_ADDR
-    },
-    {
-        USB_DATA2_END_ADDR,
-        USB_COM2_END_ADDR
-    },
-    {
-        USB_DATA3_END_ADDR,
-        USB_COM3_END_ADDR
-    },
+    }
 };
 
 
@@ -207,35 +194,20 @@ typedef struct
 
 
 static const usb_func_descs usb_func_descs1 = USB_FUNC_DESC_INIT(0, 1);
-static const usb_func_descs usb_func_descs2 = USB_FUNC_DESC_INIT(2, 3);
-static const usb_func_descs usb_func_descs3 = USB_FUNC_DESC_INIT(4, 5);
 
 static const struct usb_endpoint_descriptor usb_uart_comm_ep1[] = UART_COMM_ENDP_INIT(USB_COM1_END_ADDR);
-static const struct usb_endpoint_descriptor usb_uart_comm_ep2[] = UART_COMM_ENDP_INIT(USB_COM2_END_ADDR);
-static const struct usb_endpoint_descriptor usb_uart_comm_ep3[] = UART_COMM_ENDP_INIT(USB_COM3_END_ADDR);
 
 static const struct usb_endpoint_descriptor usb_uart_data_ep1[] = UART_DATA_ENDP_INIT(USB_DATA1_END_ADDR);
-static const struct usb_endpoint_descriptor usb_uart_data_ep2[] = UART_DATA_ENDP_INIT(USB_DATA2_END_ADDR);
-static const struct usb_endpoint_descriptor usb_uart_data_ep3[] = UART_DATA_ENDP_INIT(USB_DATA3_END_ADDR);
 
 static const struct usb_interface_descriptor uart_comm_iface1[] = USB_COMM_INTF_DESC_INIT(0, usb_uart_comm_ep1, &usb_func_descs1);
-static const struct usb_interface_descriptor uart_comm_iface2[] = USB_COMM_INTF_DESC_INIT(2, usb_uart_comm_ep2, &usb_func_descs2);
-static const struct usb_interface_descriptor uart_comm_iface3[] = USB_COMM_INTF_DESC_INIT(4, usb_uart_comm_ep3, &usb_func_descs3);
 
 static const struct usb_interface_descriptor uart_data_iface1[] = USB_DATA_INTERFACE_DESCRIPTOR_INIT(1, usb_uart_data_ep1);
-static const struct usb_interface_descriptor uart_data_iface2[] = USB_DATA_INTERFACE_DESCRIPTOR_INIT(3, usb_uart_data_ep2);
-static const struct usb_interface_descriptor uart_data_iface3[] = USB_DATA_INTERFACE_DESCRIPTOR_INIT(5, usb_uart_data_ep3);
-
 
 
 static const struct usb_interface usb_ifaces[] =
 {
     { .altsetting = uart_comm_iface1, .num_altsetting = 1, },
-    { .altsetting = uart_data_iface1, .num_altsetting = 1, },
-    { .altsetting = uart_comm_iface2, .num_altsetting = 1, },
-    { .altsetting = uart_data_iface2, .num_altsetting = 1, },
-    { .altsetting = uart_comm_iface3, .num_altsetting = 1, },
-    { .altsetting = uart_data_iface3, .num_altsetting = 1, }
+    { .altsetting = uart_data_iface1, .num_altsetting = 1, }
 };
 
 
@@ -292,17 +264,7 @@ static void usb_data_rx_cb(usbd_device *_ __attribute((unused)), uint8_t end_poi
     if (!len)
         return;
 
-    for(unsigned n = 0; n < ARRAY_SIZE(end_addrs); n++)
-    {
-        if (end_addrs[n].data_addr == end_point)
-        {
-            if (n) // UART 1+ pass straight through.
-                uart_ring_out(n, buf, len);
-            else // UART 0 is command.
-                uart_ring_in(0, buf, len);
-            break;
-        }
-    }
+    uart_ring_in(0, buf, len);
 }
 
 
