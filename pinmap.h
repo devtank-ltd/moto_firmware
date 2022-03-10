@@ -125,6 +125,15 @@ typedef struct
 #define PWM0_IO_NUM          0
 #define PWM1_IO_NUM          1
 
+#define RCC_PWM1_TIM RCC_TIM3
+#define RCC_PWM2_TIM RCC_TIM15
+
+#define PWM1_TIM TIM3
+#define PWM2_TIM TIM15
+
+#define PWM1_TIM_CH TIM_OC1
+#define PWM2_TIM_CH TIM_OC2
+
 #define PWM_COUNT 2
 
 #endif //__PINMAPS__

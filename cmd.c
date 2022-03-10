@@ -166,10 +166,13 @@ void pwm_cb(void)
             duty = strtoul(pos, &pos, 10);
             pwm_set_duty(pwm, duty);
         }
+
+        pwm_enable(pwm, false);
+        pwm_enable(pwm, true);
     }
 
     if (pwm_get(pwm, &freq, &duty))
-        log_out("PWM %u %uhz @ %u / 1000", pwm, freq, duty);
+        log_out("PWM %u %uhz @ %u / 100", pwm, freq, duty);
     else
         log_out("Invalid PWM");
 }
