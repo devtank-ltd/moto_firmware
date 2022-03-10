@@ -229,7 +229,7 @@ void uart_cb()
         pos = skip_space(++pos);
         if (*pos)
         {
-            if (isdigit(*pos))
+            if (isdigit((int)*pos))
             {
                 databits = (uint8_t)(*pos) - (uint8_t)'0';
                 pos = skip_space(++pos);
