@@ -9,7 +9,7 @@
 #include "pinmap.h"
 #include "uart_rings.h"
 
-uint32_t log_debug_mask = 0;
+uint32_t log_debug_mask = DEBUG_PWM;
 bool     log_async_log  = false;
 
 
