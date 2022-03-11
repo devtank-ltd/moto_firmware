@@ -25,7 +25,8 @@ void hard_fault_handler(void)
 }
 
 
-int main(void) {
+int main(void)
+{
     rcc_clock_setup_in_hsi48_out_48mhz();
     uarts_setup();
 
