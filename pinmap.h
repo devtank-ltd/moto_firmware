@@ -118,8 +118,8 @@ typedef struct
 
 #define IOS_STATE                                                            \
 {                                                                            \
-    IO_AS_INPUT | IO_PWM0,            /* GPIO 0 - PWM 0 */   \
-    IO_AS_INPUT | IO_PWM1,            /* GPIO 1 - PWM 1 */   \
+    IO_AS_INPUT | IO_PWM0 | IO_SPECIAL_EN,            /* GPIO 0 - PWM 0 */   \
+    IO_AS_INPUT | IO_PWM1 | IO_SPECIAL_EN,            /* GPIO 1 - PWM 1 */   \
 }
 
 #define PWM0_IO_NUM          0

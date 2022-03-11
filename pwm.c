@@ -19,19 +19,51 @@ typedef struct
 
 static pwm_setup_t pwm_setups[PWM_COUNT] =
 {
-    { 1000, 100, PWM0_TIM, PWM0_TIM_CH, {PWM0_PORT, PWM0_PIN}, PWM0_ALTFUNC },
-    { 1000, 100, PWM1_TIM, PWM1_TIM_CH, {PWM1_PORT, PWM1_PIN}, PWM1_ALTFUNC },
+    { 1000, 50, PWM0_TIM, PWM0_TIM_CH, {PWM0_PORT, PWM0_PIN}, PWM0_ALTFUNC },
+    { 1000, 50, PWM1_TIM, PWM1_TIM_CH, {PWM1_PORT, PWM1_PIN}, PWM1_ALTFUNC },
 };
 
 
-static void _setup_pwm_timer(uint32_t tim)
+
+static void start_timer(uint32_t timer_peripheral, enum tim_oc_id oc_id)
 {
+    timer_set_period(timer_peripheral, 1000000);
+
+    timer_disable_oc_output(timer_peripheral,oc_id);
+    timer_set_oc_mode(timer_peripheral,oc_id, TIM_OCM_PWM1);
+    timer_enable_oc_output(timer_peripheral,oc_id);
+
+    timer_enable_counter(timer_peripheral);
+
+    timer_set_oc_value(timer_peripheral, oc_id, 0);
+}
+
+
+static void set_pwm(uint32_t timer_peripheral, enum tim_oc_id oc_id, unsigned freq, unsigned duty)
+{
+    timer_set_period(timer_peripheral,  1000000/freq);
+
+    if (duty > 100)
+        duty = 100;
+
+    timer_set_oc_value(timer_peripheral, oc_id, 1000000/freq * duty / 100);
+
+    timer_set_counter(timer_peripheral, 1000000/freq * duty / 4 / 100);
+}
+
+
+static void _setup_pwm(pwm_setup_t * pwm_setup)
+{
+    uint32_t tim = pwm_setup->tim;
+
+    rcc_periph_clock_enable(PORT_TO_RCC(pwm_setup->pin.port));
+
     timer_disable_counter(tim);
 
     timer_set_mode(tim,
-        TIM_CR1_CKD_CK_INT,
-        TIM_CR1_CMS_EDGE,
-        TIM_CR1_DIR_UP);
+                   TIM_CR1_CKD_CK_INT,
+                   TIM_CR1_CMS_EDGE,
+                   TIM_CR1_DIR_UP);
     timer_set_prescaler(tim, rcc_ahb_frequency/1000000);
 
     timer_enable_preload(tim);
@@ -45,17 +77,9 @@ static void _start_pwm(pwm_setup_t * pwm_setup)
     gpio_set_af( pwm_setup->pin.port, pwm_setup->alt_func_num, pwm_setup->pin.pins );
     gpio_set_output_options( pwm_setup->pin.port, GPIO_OTYPE_PP, GPIO_OSPEED_25MHZ, pwm_setup->pin.pins );
 
-    timer_set_period(pwm_setup->tim, 1000000 / pwm_setup->freq);
+    start_timer(pwm_setup->tim, pwm_setup->oc_id);
 
-    timer_disable_oc_output(pwm_setup->tim, pwm_setup->oc_id);
-    timer_set_oc_mode(pwm_setup->tim, pwm_setup->oc_id, TIM_OCM_PWM1);
-    timer_enable_oc_output(pwm_setup->tim, pwm_setup->oc_id);
-
-    timer_enable_counter(pwm_setup->tim);
-    unsigned duty = 100 - pwm_setup->duty;
-
-    timer_set_oc_value(pwm_setup->tim, pwm_setup->oc_id, 1000000/pwm_setup->freq * duty / 100);
-    timer_set_counter(pwm_setup->tim, 0);
+    set_pwm(pwm_setup->tim, pwm_setup->oc_id, pwm_setup->freq, pwm_setup->duty);
 }
 
 
@@ -122,6 +146,9 @@ void pwm_init(void)
     rcc_periph_clock_enable(RCC_PWM0_TIM);
     rcc_periph_clock_enable(RCC_PWM1_TIM);
 
-    _setup_pwm_timer(PWM0_TIM);
-    _setup_pwm_timer(PWM1_TIM);
+    _setup_pwm(&pwm_setups[0]);
+    _setup_pwm(&pwm_setups[1]);
+
+    pwm_enable(0, true);
+    pwm_enable(1, true);
 }
