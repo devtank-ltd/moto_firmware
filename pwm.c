@@ -146,6 +146,8 @@ void pwm_init(void)
     rcc_periph_clock_enable(RCC_PWM0_TIM);
     rcc_periph_clock_enable(RCC_PWM1_TIM);
 
+    timer_enable_break_main_output(PWM0_TIM);
+
     _setup_pwm(&pwm_setups[0]);
     _setup_pwm(&pwm_setups[1]);
 
