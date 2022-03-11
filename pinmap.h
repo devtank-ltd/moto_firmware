@@ -15,46 +15,6 @@ typedef struct
 #define LED_PORT   GPIOA
 #define LED_PIN    GPIO5
 
-#define ADCS_PORT_N_PINS                            \
-{                                                   \
-    {GPIOA, GPIO4},      /* ADC 0  = Channel 4  */  \
-    {GPIOA, GPIO6},      /* ADC 1  = Channel 6  */  \
-    {GPIOA, GPIO7},      /* ADC 2  = Channel 7  */  \
-    {GPIOB, GPIO0},      /* ADC 3  = Channel 8  */  \
-    {GPIOB, GPIO1},      /* ADC 4  = Channel 9  */  \
-    {GPIOC, GPIO0},      /* ADC 5  = Channel 10 */  \
-    {GPIOC, GPIO1},      /* ADC 6  = Channel 11 */  \
-    {GPIOC, GPIO3},      /* ADC 7  = Channel 13 */  \
-    {GPIOC, GPIO4},      /* ADC 8  = Channel 14 */  \
-    {GPIOC, GPIO5},      /* ADC 9  = Channel 15 */  \
-}
-
-#define ADC_CHANNELS  {4,6,7,8,9,10,11,13,14,15}
-
-#define ADC_COUNT 10
-
-#define PPS_PORT_N_PINS             \
-{                                   \
-    {GPIOB, GPIO3},     /* PPS 0 */ \
-    {GPIOC, GPIO7},     /* PPS 1 */ \
-}
-
-
-#define PPS_EXTI      \
-{                     \
-    {TIM1, EXTI3},    \
-    {TIM14, EXTI7},   \
-}
-
-#define PPS_INIT                     \
-{                                    \
-    {RCC_TIM1, NVIC_EXTI2_3_IRQ },   \
-    {RCC_TIM14, NVIC_EXTI4_15_IRQ},  \
-}
-
-#define PPS0_EXTI_ISR        exti2_3_isr
-#define PPS1_EXTI_ISR        exti4_15_isr
-
 /*subset of usb_cdc_line_coding_bParityType*/
 typedef enum
 {
