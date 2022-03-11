@@ -52,11 +52,11 @@ typedef struct
 
 #define UART_CHANNELS                                                                                                   \
 {                                                                                                                       \
-    { USART2, RCC_USART2, UART_2_SPEED, UART_2_DATABITS, UART_2_PARITY, UART_2_STOP, GPIOA, GPIO2  | GPIO3,  GPIO_AF1, NVIC_USART2_IRQ,   (uint32_t)&USART2_TDR, NVIC_DMA1_CHANNEL4_7_DMA2_CHANNEL3_5_IRQ, DMA_CHANNEL4, UART2_PRIORITY, 0 }, /* UART 0 */ \
+    { USART3, RCC_USART3, UART_3_SPEED, UART_3_DATABITS, UART_3_PARITY, UART_3_STOP, GPIOB, GPIO10 | GPIO11, GPIO_AF4, NVIC_USART3_4_IRQ, (uint32_t)&USART3_TDR, NVIC_DMA1_CHANNEL4_7_DMA2_CHANNEL3_5_IRQ, DMA_CHANNEL7, UART3_PRIORITY, 0 }, /* UART 0 */ \
 }
 
 #define UART_CHANNELS_COUNT 1
-#define UART_DEBUG USART2
+#define UART_DEBUG          USART3
 
 
 #define PWM0_IO_NUM          0

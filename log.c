@@ -13,7 +13,7 @@ uint32_t log_debug_mask = DEBUG_PWM;
 bool     log_async_log  = false;
 
 
-extern void platform_raw_msg(const char * s)
+void platform_raw_msg(const char * s)
 {
     while(*s)
         usart_send_blocking(UART_DEBUG, *s++);

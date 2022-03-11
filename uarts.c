@@ -21,9 +21,6 @@ static uart_channel_t uart_channels[] = UART_CHANNELS;
 
 static volatile bool uart_doing_dma[UART_CHANNELS_COUNT] = {0};
 
-#define UART_2_ISR  usart2_isr
-
-
 
 static uint32_t _uart_get_parity(uart_parity_t parity)
 {
@@ -223,27 +220,7 @@ static bool uart_getc(uint32_t uart, char* c)
 }
 
 
-
-static void process_serial(unsigned uart)
-{
-    if (uart >= UART_CHANNELS_COUNT)
-        return;
-
-    uart_channel_t * channel = &uart_channels[uart];
-
-    if (!channel->enabled)
-        return;
-
-    char c;
-
-    if (!uart_getc(channel->usart, &c))
-        return;
-
-    uart_ring_in(uart, &c, 1);
-}
-
-
-void UART_2_ISR(void)
+void usart3_4_isr(void)
 {
     char c;
 
@@ -258,15 +235,15 @@ void UART_2_ISR(void)
             log_debug_mask = DEBUG_SYS;
             log_debug(DEBUG_SYS, "Enabling Debug via debug comms");
             log_debug(DEBUG_SYS, "U = enable UART debug");
-            log_debug(DEBUG_SYS, "A = enable ADC debug");
+            log_debug(DEBUG_SYS, "P = enable PWM debug");
             log_debug(DEBUG_SYS, "I = enable IO debug");
             log_debug(DEBUG_SYS, "R = show UART ring buffers");
             break;
-        case 'A':
+        case 'P':
             if (log_debug_mask)
             {
-                log_debug(DEBUG_SYS, "Enabled ADC debug");
-                log_debug_mask |= DEBUG_ADC;
+                log_debug(DEBUG_SYS, "Enabled PWM debug");
+                log_debug_mask |= DEBUG_PWM;
             }
             break;
         case 'U':
@@ -299,16 +276,6 @@ void UART_2_ISR(void)
     }
 }
 
-
-#ifdef STM32F0
-void usart3_4_isr(void)
-{
-    process_serial(1);
-    process_serial(2);
-}
-#else
-#error Requires handling for UART 3 and 4.
-#endif
 
 void uarts_setup(void)
 {
@@ -361,8 +328,6 @@ bool uart_dma_out(unsigned uart, char *data, int size)
 
     uart_doing_dma[uart] = true;
 
-    SYSCFG_CFGR1 |= SYSCFG_CFGR1_USART3_DMA_RMP;
-
     dma_channel_reset(DMA1, channel->dma_channel);
 
     dma_set_peripheral_address(DMA1, channel->dma_channel, channel->dma_addr);
@@ -384,41 +349,21 @@ bool uart_dma_out(unsigned uart, char *data, int size)
 }
 
 
-static void process_complete_dma(void)
-{
-    unsigned found = 0;
-
-    for(unsigned n = 0; n < UART_CHANNELS_COUNT; n++)
-    {
-        const uart_channel_t * channel = &uart_channels[n];
-
-        if ((DMA1_ISR & DMA_ISR_TCIF(channel->dma_channel)) != 0)
-        {
-            DMA1_IFCR |= DMA_IFCR_CTCIF(channel->dma_channel);
-
-            uart_doing_dma[n] = false;
-
-            dma_disable_transfer_complete_interrupt(DMA1, channel->dma_channel);
-
-            usart_disable_tx_dma(channel->usart);
-
-            dma_disable_channel(DMA1, channel->dma_channel);
-            found++;
-        }
-    }
-
-    if (!found)
-        log_error("No DMA complete in ISR");
-}
-
-
 void dma1_channel4_7_dma2_channel3_5_isr(void)
 {
-    process_complete_dma();
-}
+    const uart_channel_t * channel = &uart_channels[0];
 
+    if ((DMA1_ISR & DMA_ISR_TCIF(channel->dma_channel)) != 0)
+    {
+        DMA1_IFCR |= DMA_IFCR_CTCIF(channel->dma_channel);
 
-void dma1_channel2_3_dma2_channel1_2_isr(void)
-{
-    process_complete_dma();
+        uart_doing_dma[0] = false;
+
+        dma_disable_transfer_complete_interrupt(DMA1, channel->dma_channel);
+
+        usart_disable_tx_dma(channel->usart);
+
+        dma_disable_channel(DMA1, channel->dma_channel);
+    }
+    else log_error("No DMA complete in ISR");
 }
