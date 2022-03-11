@@ -117,7 +117,7 @@ debug:
 cmd:
 	screen $$(ls /dev/serial/by-id/usb-Devtank_Ltd_IO_Board_Prototype-if00* -1 | head -n 1) 115200 8n1
 
-desktop_boot:
+desktop_dfu:
 	sudo gpioset --mode=signal --background 0 3=0
 	sudo gpioset -m time -s 1 0 2=0
 	sudo gpioset -m time -s 1 0 2=1
@@ -127,7 +127,7 @@ desktop_reset:
 	sudo gpioset -m time -s 1 0 2=0
 	sudo gpioset -m time -s 1 0 2=1
 
-desktop_dfu:
+desktop_boot:
 	sudo gpioset --mode=signal --background 0 3=1
 	sudo gpioset -m time -s 1 0 2=0
 	sudo gpioset -m time -s 1 0 2=1
