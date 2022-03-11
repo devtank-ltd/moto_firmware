@@ -59,25 +59,22 @@ typedef struct
 #define UART_DEBUG          USART3
 
 
-#define PWM0_IO_NUM          0
-#define PWM1_IO_NUM          1
+#define PWM0_IO_NUM         0
+#define PWM1_IO_NUM         1
 
-#define PWM0_PORT          GPIOB
-#define PWM0_PIN           GPIO14
-#define PWM0_ALTFUNC       GPIO_AF1
+#define PWM0_PORT           GPIOB
+#define PWM0_PIN            GPIO14
+#define PWM0_ALTFUNC        GPIO_AF1
+#define RCC_PWM0_TIM        RCC_TIM15
+#define PWM0_TIM            TIM15
+#define PWM0_TIM_CH         TIM_OC1
 
-#define PWM1_PORT          GPIOA
-#define PWM1_PIN           GPIO6
-#define PWM1_ALTFUNC       GPIO_AF1
-
-#define RCC_PWM0_TIM RCC_TIM15
-#define RCC_PWM1_TIM RCC_TIM3
-
-#define PWM0_TIM TIM15
-#define PWM1_TIM TIM3
-
-#define PWM0_TIM_CH TIM_OC1
-#define PWM1_TIM_CH TIM_OC1
+#define PWM1_PORT           GPIOA
+#define PWM1_PIN            GPIO6
+#define PWM1_ALTFUNC        GPIO_AF1
+#define RCC_PWM1_TIM        RCC_TIM3
+#define PWM1_TIM            TIM3
+#define PWM1_TIM_CH         TIM_OC1
 
 #define PWM_COUNT 2
 
