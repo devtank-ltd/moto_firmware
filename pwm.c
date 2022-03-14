@@ -79,7 +79,8 @@ static void _start_pwm(pwm_setup_t * pwm_setup)
 
     start_timer(pwm_setup->tim, pwm_setup->oc_id);
 
-    set_pwm(pwm_setup->tim, pwm_setup->oc_id, pwm_setup->freq, pwm_setup->duty);
+    unsigned duty = 100 - pwm_setup->duty;
+    set_pwm(pwm_setup->tim, pwm_setup->oc_id, pwm_setup->freq, duty);
 }
 
 
