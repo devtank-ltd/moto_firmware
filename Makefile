@@ -39,7 +39,8 @@ SOURCES += main.c \
            usb_uarts.c \
            pwm.c \
            io.c \
-           ring.c
+           ring.c \
+           drv8704.c
 
 BUILD_DIR := build/
 PROJECT_NAME := firmware

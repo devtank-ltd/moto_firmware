@@ -238,6 +238,7 @@ void usart3_4_isr(void)
             log_debug(DEBUG_SYS, "P = enable PWM debug");
             log_debug(DEBUG_SYS, "I = enable IO debug");
             log_debug(DEBUG_SYS, "R = show UART ring buffers");
+            log_debug(DEBUG_SYS, "S = enable SPI debug");
             break;
         case 'P':
             if (log_debug_mask)
@@ -267,6 +268,15 @@ void usart3_4_isr(void)
                 if (!(log_debug_mask & DEBUG_UART))
                     log_debug(DEBUG_SYS, "Enabled UART debug");
                 log_debug_mask |= DEBUG_UART;
+                uart_rings_check();
+            }
+            break;
+        case 'S':
+            if (log_debug_mask)
+            {
+                if (!(log_debug_mask & DEBUG_SPI))
+                    log_debug(DEBUG_SYS, "Enabled SPI debug");
+                log_debug_mask |= DEBUG_SPI;
                 uart_rings_check();
             }
             break;

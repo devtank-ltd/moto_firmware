@@ -102,4 +102,10 @@ typedef struct
     IO_AS_INPUT | IO_PWM1 | IO_SPECIAL_EN,            /* GPIO 1 - PWM 1 */   \
 }
 
+
+#define DRV8704_SPI_PORT        GPIOB
+#define DRV8704_SPI_AF_GPIOS   (GPIO3 | GPIO4 | GPIO5)
+#define DRV8704_CS_PORT         GPIOD
+#define DRV8704_CS_PIN          GPIO2
+
 #endif //__PINMAPS__

@@ -50,5 +50,6 @@
 #define DEBUG_UART  0x4
 #define DEBUG_IO    0x8
 #define DEBUG_PWM   0x10
+#define DEBUG_SPI   0x20
 
 #endif //__CONFIG__
