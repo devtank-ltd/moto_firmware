@@ -126,9 +126,9 @@ typedef union _drv8704_xfer_t
 {
     struct
     {
-        uint16_t r_w:1;
-        uint16_t addr:3;    /**< Register offset address */
         uint16_t value:12;   /**< Register value */
+        uint16_t addr:3;    /**< Register offset address */
+        uint16_t wr:1;
     } info;
     uint16_t buffer;
 } drv8704_xfer_t;
@@ -143,34 +143,52 @@ static void drv8704_delay(uint32_t delay)
 }
 
 
+void drv8704_reset(void)
+{
+    log_debug(DEBUG_SPI, "Resetting...");
+    gpio_clear(DRV8704_RS_PORT, DRV8704_RS_PIN);
+    drv8704_delay(10000);
+    gpio_set(DRV8704_RS_PORT, DRV8704_RS_PIN);
+}
+
+
 static void drv8704_enable_device(void)
 {
-    gpio_clear(DRV8704_CS_PORT, DRV8704_CS_PIN);
+    gpio_set(DRV8704_CS_PORT, DRV8704_CS_PIN);
 }
 
 
 static void drv8704_disable_device(void)
 {
     drv8704_delay(10000);
-    gpio_set(DRV8704_CS_PORT, DRV8704_CS_PIN);
+    gpio_clear(DRV8704_CS_PORT, DRV8704_CS_PIN);
+}
+
+
+static void drv8704_xfer(drv8704_xfer_t* xfer)
+{
+    log_debug(DEBUG_SPI, "XFER WR:%04"PRIX16, xfer->buffer);
+    drv8704_enable_device();
+    xfer->buffer = spi_xfer(SPI1, xfer->buffer);
+    drv8704_disable_device();
+    log_debug(DEBUG_SPI, "XFER RD:%04"PRIX16, xfer->buffer);
 }
 
 
 static void drv8704_write_register(uint8_t addr, uint16_t value)
 {
-    log_debug(DEBUG_SPI, "drv8704_write_register addr:%02"PRIX8" value:%02"PRIX16, addr, value);
+    log_debug(DEBUG_SPI, "drv8704_write_register addr:0x%02"PRIX8" value:0x%03"PRIX16, addr, value);
     drv8704_xfer_t xfer = {.info = {.wr = 0, .addr = addr, .value = value}};
-    spi_send(SPI1, xfer.buffer);
+    drv8704_xfer(&xfer);
 }
 
 
-static uint8_t drv8704_read_register(uint8_t addr)
+static uint16_t drv8704_read_register(uint8_t addr)
 {
-    drv8704_xfer_t xfer = {.info = {.wr = 1, .addr = addr, .value = 0xFF}};
-    spi_send(SPI1, xfer.buffer);
-    xfer.buffer = spi_read(SPI1);
-    log_debug(DEBUG_SPI, "drv8704_read_register addr:%02"PRIX8" value:%02"PRIX16, addr, xfer.data.value);
-    return xfer.data.value;
+    drv8704_xfer_t xfer = {.info = {.wr = 1, .addr = addr, .value = 0x0FFF}};
+    drv8704_xfer(&xfer);
+    log_debug(DEBUG_SPI, "drv8704_read_register addr:0x%02"PRIX8" value:0x%03"PRIX16, addr, xfer.info.value);
+    return xfer.info.value;
 }
 
 
@@ -182,6 +200,9 @@ void drv8704_init(void)
     rcc_periph_clock_enable(RCC_SPI1);
 
     gpio_mode_setup(DRV8704_CS_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, DRV8704_CS_PIN);
+    gpio_mode_setup(DRV8704_RS_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, DRV8704_RS_PIN);
+
+    gpio_clear(DRV8704_RS_PORT, DRV8704_RS_PIN);
 
     // Assign alternative function 0 to SPI GPIO pins
     gpio_mode_setup(DRV8704_SPI_PORT,
@@ -202,8 +223,11 @@ void drv8704_init(void)
                     SPI_CR1_CPHA_CLK_TRANSITION_2,
                     SPI_CR1_MSBFIRST);
 
-    spi_set_data_size(SPI1, SPI_CR2_DS_12BIT);
-
+    spi_set_data_size(SPI1, SPI_CR2_DS_16BIT);
+    spi_set_clock_polarity_1(SPI1);
+    spi_set_clock_phase_1(SPI1);
+    spi_set_nss_low(SPI1);
+    spi_enable_software_slave_management(SPI1);
     spi_enable(SPI1);
 }
 

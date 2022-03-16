@@ -182,7 +182,15 @@ void pwm_cb(void)
 void spi_cb(void)
 {
     char * pos = rx_buffer + rx_pos;
+    char* pos_before = pos;
     uint8_t addr = strtoul(pos, &pos, 10);
+    if (pos_before == pos)
+    {
+        // No Address reset
+        log_out("Resetting chip");
+        drv8704_reset();
+        return;
+    } 
     uint16_t value;
     if (pos && *pos)
     {
@@ -190,16 +198,16 @@ void spi_cb(void)
         pos = skip_space(pos);
         value = strtoul(pos, NULL, 10);
         drv8704_write(addr, value);
-        log_out("Set address 0x%"PRIx8" = 0x%"PRIu16, addr, value);
+        log_out("Set address 0x%02"PRIX8" = 0x%03"PRIX16, addr, value);
         return;
     }
     // Get the value of a register.
     if (!drv8704_read(addr, &value))
     {
-        log_out("Could not read address 0x%"PRIx8, addr);
+        log_out("Could not read address 0x%02"PRIX8, addr);
         return;
     }
-    log_out("Address 0x%"PRIx8" = 0x%"PRIu16, addr, value);
+    log_out("Address 0x%02"PRIX8" = 0x%03"PRIX16, addr, value);
 }
 
 

@@ -107,5 +107,7 @@ typedef struct
 #define DRV8704_SPI_AF_GPIOS   (GPIO3 | GPIO4 | GPIO5)
 #define DRV8704_CS_PORT         GPIOD
 #define DRV8704_CS_PIN          GPIO2
+#define DRV8704_RS_PORT         GPIOC
+#define DRV8704_RS_PIN          GPIO2
 
 #endif //__PINMAPS__
