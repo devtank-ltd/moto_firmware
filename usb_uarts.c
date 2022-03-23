@@ -34,7 +34,7 @@ static bool connected = false;
 
 static const char *usb_strings[] = {
         "Devtank Ltd",
-        "IO Board",
+        "Moto Board",
         "Prototype",
         "Comm"
         "Devtank UART",
